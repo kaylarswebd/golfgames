@@ -1,0 +1,172 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bingo Bango Bongo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  background:#0f5132;
+  font-family:system-ui,-apple-system,sans-serif;
+  color:#fff;
+}
+.container{max-width:1200px}
+.card{
+  background:#fff;
+  color:#000;
+  border:none;
+  border-radius:22px;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+}
+h1{font-weight:800}
+select,input{border-radius:12px!important}
+table{
+  border-collapse:separate;
+  border-spacing:0 10px;
+}
+th,td{
+  text-align:center;
+  vertical-align:middle;
+}
+.total{
+  background:#0f5132;
+  color:#fff;
+  padding:1rem;
+  border-radius:16px;
+  font-size:1.15rem;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+<div class="container py-5">
+
+<h1 class="text-center mb-4">Bingo · Bango · Bongo</h1>
+
+<!-- PLAYER SETUP -->
+<div class="card p-4 mb-4">
+  <div class="row g-3">
+    <div class="col-md-3"><input class="form-control player-input" placeholder="Player 1"></div>
+    <div class="col-md-3"><input class="form-control player-input" placeholder="Player 2"></div>
+    <div class="col-md-3"><input class="form-control player-input" placeholder="Player 3"></div>
+    <div class="col-md-3"><input class="form-control player-input" placeholder="Player 4"></div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <label class="fw-bold">Bet per point ($)</label>
+      <input id="bet" type="number" class="form-control" value="1" min="0">
+    </div>
+  </div>
+</div>
+
+<!-- SCORECARD -->
+<div class="card p-4">
+<table class="table">
+  <thead>
+    <tr>
+      <th>Hole</th>
+      <th>Bingo</th>
+      <th>Bango</th>
+      <th>Bongo</th>
+    </tr>
+  </thead>
+  <tbody id="holes"></tbody>
+</table>
+</div>
+
+<!-- TOTALS -->
+<div class="row mt-4 g-3">
+  <div class="col-md-3"><div class="total" id="t0"></div></div>
+  <div class="col-md-3"><div class="total" id="t1"></div></div>
+  <div class="col-md-3"><div class="total" id="t2"></div></div>
+  <div class="col-md-3"><div class="total" id="t3"></div></div>
+</div>
+
+</div>
+
+<script>
+const playerInputs = document.querySelectorAll(".player-input");
+const holesEl = document.getElementById("holes");
+
+let players = ["Player 1","Player 2","Player 3","Player 4"];
+let totals  = [0,0,0,0];
+
+// Build scorecard
+for(let hole=1; hole<=18; hole++){
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${hole}</td>
+    ${[0,1,2].map(() => `
+      <td>
+        <select class="form-select score-select" data-prev="">
+        </select>
+      </td>
+    `).join("")}
+  `;
+  holesEl.appendChild(tr);
+}
+
+// Update player names from inputs
+function updatePlayers(){
+  players = [...playerInputs].map((input,i)=> input.value || `Player ${i+1}`);
+  updateAllDropdowns();
+  updateTotals();
+}
+
+// Populate dropdown options
+function dropdownOptions(){
+  return `<option value="">—</option>` +
+    players.map((name,i)=>`<option value="${i}">${name}</option>`).join("");
+}
+
+// Update all dropdowns without losing selections
+function updateAllDropdowns(){
+  document.querySelectorAll(".score-select").forEach(sel=>{
+    const current = sel.value;
+    sel.innerHTML = dropdownOptions();
+    sel.value = current;
+  });
+}
+
+// Handle scoring
+function handleScoreChange(select){
+  const bet = Number(document.getElementById("bet").value) || 0;
+  const prev = select.dataset.prev;
+  const curr = select.value;
+
+  if(prev !== ""){
+    totals[prev] -= bet;
+  }
+  if(curr !== ""){
+    totals[curr] += bet;
+  }
+
+  select.dataset.prev = curr;
+  updateTotals();
+}
+
+// Totals display
+function updateTotals(){
+  players.forEach((name,i)=>{
+    document.getElementById(`t${i}`).innerText =
+      `${name}: $${totals[i].toFixed(2)}`;
+  });
+}
+
+// Event bindings
+playerInputs.forEach(input=>input.addEventListener("input", updatePlayers));
+
+document.querySelectorAll(".score-select").forEach(sel=>{
+  sel.innerHTML = dropdownOptions();
+  sel.addEventListener("change", ()=>handleScoreChange(sel));
+});
+
+// Init
+updateTotals();
+</script>
+</body>
+</html>

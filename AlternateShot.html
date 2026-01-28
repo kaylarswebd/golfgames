@@ -1,0 +1,156 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Alternate Shot (Foursomes)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  background:#0f5132;
+  color:#fff;
+  font-family:system-ui,-apple-system,sans-serif;
+}
+.container{max-width:1200px}
+.card{
+  background:#fff;
+  color:#000;
+  border-radius:22px;
+  border:none;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+}
+button{border-radius:14px!important}
+input{border-radius:12px!important}
+.total{
+  background:#0f5132;
+  color:#fff;
+  padding:1rem;
+  border-radius:16px;
+  font-weight:600;
+}
+.win-selected{
+  outline:4px solid #198754;
+  opacity:.9;
+}
+.money{font-size:.9rem;opacity:.85}
+</style>
+</head>
+
+<body>
+<div class="container py-5">
+
+<h1 class="text-center mb-4">🏌️ Alternate Shot (Foursomes)</h1>
+
+<!-- PLAYERS -->
+<div class="card p-4 mb-4">
+  <div class="row g-3">
+    <div class="col-md-3"><input class="form-control player" placeholder="Player 1"></div>
+    <div class="col-md-3"><input class="form-control player" placeholder="Player 2"></div>
+    <div class="col-md-3"><input class="form-control player" placeholder="Player 3"></div>
+    <div class="col-md-3"><input class="form-control player" placeholder="Player 4"></div>
+  </div>
+</div>
+
+<!-- HOLE -->
+<div class="card p-4 mb-4">
+
+  <div class="d-flex justify-content-between mb-2">
+    <button class="btn btn-secondary" onclick="prevHole()">← Back</button>
+    <button class="btn btn-secondary" onclick="nextHole()">Next →</button>
+  </div>
+
+  <h4 id="holeTitle"></h4>
+  <p id="teamText" class="fw-bold"></p>
+
+  <div class="d-grid gap-2">
+    <button id="teamA" class="btn btn-success" onclick="selectWin(0)">Team A Wins Hole</button>
+    <button id="teamB" class="btn btn-warning" onclick="selectWin(1)">Team B Wins Hole</button>
+  </div>
+
+</div>
+
+<!-- MONEY -->
+<div class="card p-4 mb-4">
+  <label class="fw-bold mb-2">💵 Dollars per Point</label>
+  <input type="number" id="dollarValue" class="form-control" value="1" step="0.01">
+</div>
+
+<!-- TOTALS -->
+<div class="row g-3">
+  <div class="col-md-6"><div class="total" id="tA"></div></div>
+  <div class="col-md-6"><div class="total" id="tB"></div></div>
+</div>
+
+</div>
+
+<script>
+const inputs=document.querySelectorAll(".player");
+const dollarInput=document.getElementById("dollarValue");
+
+let players=["Player 1","Player 2","Player 3","Player 4"];
+let points=[0,0]; // Team A, Team B
+let hole=1;
+let holeResults={};
+
+inputs.forEach((i,idx)=>{
+  i.addEventListener("input",()=>{
+    players[idx]=i.value||`Player ${idx+1}`;
+    updateUI();
+  });
+});
+
+dollarInput.addEventListener("input",updateTotals);
+
+function applyResult(h,team){
+  points[team]+=1;
+}
+
+function removeResult(h){
+  if(holeResults[h]===undefined) return;
+  points[holeResults[h]]-=1;
+}
+
+function selectWin(team){
+  removeResult(hole);
+  holeResults[hole]=team;
+  applyResult(hole,team);
+  updateWinHighlight();
+  updateTotals();
+}
+
+function updateWinHighlight(){
+  document.getElementById("teamA").classList.remove("win-selected");
+  document.getElementById("teamB").classList.remove("win-selected");
+  if(holeResults[hole]!==undefined){
+    document.getElementById(holeResults[hole]===0?"teamA":"teamB")
+      .classList.add("win-selected");
+  }
+}
+
+function nextHole(){ if(hole<18){ hole++; updateUI(); } }
+function prevHole(){ if(hole>1){ hole--; updateUI(); } }
+
+function updateTotals(){
+  const dollar=Number(dollarInput.value)||0;
+  document.getElementById("tA").innerHTML=
+    `Team A (${players[0]} & ${players[1]}): ${points[0]} pts<br>
+     <span class="money">$${(points[0]*dollar).toFixed(2)}</span>`;
+  document.getElementById("tB").innerHTML=
+    `Team B (${players[2]} & ${players[3]}): ${points[1]} pts<br>
+     <span class="money">$${(points[1]*dollar).toFixed(2)}</span>`;
+}
+
+function updateUI(){
+  holeTitle.innerText=`Hole ${hole}`;
+  teamText.innerText=
+    `Team A: ${players[0]} & ${players[1]}  |  Team B: ${players[2]} & ${players[3]}`;
+  updateWinHighlight();
+  updateTotals();
+}
+
+updateUI();
+</script>
+</body>
+</html>

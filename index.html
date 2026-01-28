@@ -1,0 +1,234 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fairway Games | Golf Side Bets & Trackers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+/* ---------- GLOBAL ---------- */
+html,body{
+  height:100%;
+}
+body{
+  display:flex;
+  flex-direction:column;
+  background:#f4f7f5;
+  font-family:system-ui,-apple-system,sans-serif;
+}
+main{
+  flex:1;
+}
+
+/* ---------- NAV ---------- */
+.navbar{
+  background:#0f5132;
+}
+.navbar-brand{
+  font-weight:900;
+  letter-spacing:.5px;
+}
+.nav-link{
+  color:#fff!important;
+  opacity:.9;
+}
+.nav-link:hover{
+  opacity:1;
+}
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;
+  height:70vh;
+  background:url("https://images.unsplash.com/photo-1500930283048-5f3f7f1b0f8f") center/cover no-repeat;
+  display:flex;
+  align-items:center;
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,rgba(0,0,0,.75),rgba(0,0,0,.25));
+}
+.hero-content{
+  position:relative;
+  z-index:2;
+  color:#fff;
+  max-width:800px;
+}
+.hero h1{
+  font-size:clamp(2.5rem,5vw,4rem);
+  font-weight:900;
+}
+.hero p{
+  font-size:1.15rem;
+  opacity:.95;
+}
+
+/* ---------- SECTIONS ---------- */
+.section{
+  padding:5rem 0;
+}
+.section h2{
+  font-weight:900;
+  margin-bottom:1rem;
+}
+.section p{
+  max-width:700px;
+  color:#555;
+}
+
+/* ---------- GAME CARDS ---------- */
+.game-card{
+  background:#fff;
+  border-radius:22px;
+  box-shadow:0 30px 80px rgba(0,0,0,.15);
+  padding:2.5rem;
+  height:100%;
+  transition:all .35s ease;
+}
+.game-card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 40px 90px rgba(0,0,0,.25);
+}
+.game-card h4{
+  font-weight:800;
+}
+.game-card p{
+  color:#555;
+}
+.game-card a{
+  font-weight:700;
+}
+
+/* ---------- FOOTER ---------- */
+footer{
+  background:#0f5132;
+  color:#fff;
+  padding:2rem 0;
+}
+footer p{
+  margin:0;
+  opacity:.85;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">⛳ Fairway Games</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="wolf.html">Wolf</a></li>
+        <li class="nav-item"><a class="nav-link" href="six-six-six.html">Six-Six-Six</a></li>
+        <li class="nav-item"><a class="nav-link" href="alternate-shot.html">Alternate Shot</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1>Golf Side Games, Done Right</h1>
+      <p class="mt-3">
+        Track golf betting games cleanly, fairly, and without arguments.
+        Built for real rounds, real money, and real players — not spreadsheets.
+      </p>
+      <a href="#games" class="btn btn-success btn-lg mt-4 px-5">Explore Games</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section">
+  <div class="container">
+    <h2>Designed for the Course</h2>
+    <p>
+      Fairway Games was built for golfers who actually play for something.
+      Whether it’s Wolf, Six-Six-Six, or Alternate Shot, every game is structured
+      to prevent mistakes, eliminate double counting, and keep things moving
+      without slowing the group down.
+    </p>
+  </div>
+</section>
+
+<!-- GAMES -->
+<section class="section bg-light" id="games">
+  <div class="container">
+    <h2 class="mb-4">Available Games</h2>
+
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <div class="game-card">
+          <h4>🐺 Wolf</h4>
+          <p>
+            The ultimate rotating-pressure game. Automatically tracks partners,
+            lone wolf scenarios, and payouts — without math disputes.
+          </p>
+          <a href="wolf.html" class="btn btn-outline-success mt-3">Play Wolf →</a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="game-card">
+          <h4>🎬 Six-Six-Six</h4>
+          <p>
+            Rotate partners every six holes and settle up cleanly.
+            Per-hole tracking with instant money conversion.
+          </p>
+          <a href="666.html" class="btn btn-outline-success mt-3">Play Six-Six-Six →</a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="game-card">
+          <h4>🏌️ Alternate Shot</h4>
+          <p>
+            Pure teamwork. Track match-play alternate shot rounds
+            with simple hole-by-hole results and payouts.
+          </p>
+          <a href="alternateshot.html" class="btn btn-outline-success mt-3">Play Alternate Shot →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section">
+  <div class="container text-center">
+    <h2>Built Like an App, Not a Spreadsheet</h2>
+    <p class="mx-auto">
+      Every page is designed to be used mid-round on a phone,
+      with large tap targets, visual feedback, and logic that
+      protects you from accidental scoring mistakes.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container text-center">
+    <p>© 2026 Fairway Games • Built for golfers who play for something</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
