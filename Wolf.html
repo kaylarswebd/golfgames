@@ -53,15 +53,6 @@ select,input{border-radius:12px!important}
 
 <h1 class="text-center mb-4">🐺 Wolf Game</h1>
 
-<!-- HOLE NAV -->
-<div class="card p-3 mb-3 text-center">
-  <div class="d-flex justify-content-between align-items-center">
-    <button class="btn btn-secondary" onclick="prevHole()">← Back</button>
-    <h4 id="holeTitle" class="m-0"></h4>
-    <button class="btn btn-secondary" onclick="nextHole()">Next →</button>
-  </div>
-</div>
-
 <!-- PLAYERS + PAYOUTS -->
 <div class="card p-4 mb-3">
   <h5 class="mb-3">Players & Payouts</h5>
@@ -73,11 +64,25 @@ select,input{border-radius:12px!important}
     <div class="col-6"><input class="form-control player" placeholder="Player 4"></div>
   </div>
 
+  <h5 class="mb-3">Money 💰</h5>
+
   <div class="row g-2">
     <div class="col-6"><label class="small">Base</label><input id="base" type="number" class="form-control" value="2"></div>
     <div class="col-6"><label class="small">Lone Mult</label><input id="loneMult" type="number" class="form-control" value="2"></div>
     <div class="col-6"><label class="small">Dump Mult</label><input id="dumpMult" type="number" class="form-control" value="2"></div>
     <div class="col-6"><label class="small">Blind Mult</label><input id="blindMult" type="number" class="form-control" value="2"></div>
+  </div>
+
+  <p>Make some money off these boys!</p>
+
+</div>
+
+<!-- HOLE NAV -->
+<div class="card p-3 mb-3 text-center">
+  <div class="d-flex justify-content-between align-items-center">
+    <button class="btn btn-secondary" onclick="prevHole()">← Back</button>
+    <h4 id="holeTitle" class="m-0"></h4>
+    <button class="btn btn-secondary" onclick="nextHole()">Next →</button>
   </div>
 </div>
 
