@@ -40,7 +40,6 @@ select,input{border-radius:12px!important}
   text-align:center;
 }
 
-/* Selected button */
 .btn.selected{
   box-shadow:0 0 0 4px rgba(0,0,0,.15) inset;
   transform:scale(1.03);
@@ -64,17 +63,15 @@ select,input{border-radius:12px!important}
     <div class="col-6"><input class="form-control player" placeholder="Player 4"></div>
   </div>
 
-  <h5 class="mb-3">Money 💰</h5>
+  <h6 class="mb-2">Money Settings</h6>
 
   <div class="row g-2">
-    <div class="col-6"><label class="small">Base</label><input id="base" type="number" class="form-control" value="2"></div>
+    <div class="col-6"><label class="small">Base Points Per Player</label><input id="base" type="number" class="form-control" value="2"></div>
+    <div class="col-6"><label class="small">$/Point</label><input id="dollarValue" type="number" step=".25" class="form-control" value="0.25"></div>
     <div class="col-6"><label class="small">Lone Mult</label><input id="loneMult" type="number" class="form-control" value="2"></div>
     <div class="col-6"><label class="small">Dump Mult</label><input id="dumpMult" type="number" class="form-control" value="2"></div>
     <div class="col-6"><label class="small">Blind Mult</label><input id="blindMult" type="number" class="form-control" value="2"></div>
   </div>
-
-  <p>Make some money off these boys!</p>
-
 </div>
 
 <!-- HOLE NAV -->
@@ -101,84 +98,67 @@ select,input{border-radius:12px!important}
     </div>
   </div>
 
-  <div class="row g-2 mode-group mb-3">
+  <div class="row g-2 mb-3 mode-group">
     <div class="col-6"><button class="btn btn-outline-primary w-100" onclick="selectMode(this,'team')">Team</button></div>
     <div class="col-6"><button class="btn btn-outline-danger w-100" onclick="selectMode(this,'lone')">Lone</button></div>
     <div class="col-6"><button class="btn btn-outline-warning w-100" onclick="selectMode(this,'blind')">Blind</button></div>
     <div class="col-6"><button class="btn btn-outline-dark w-100" onclick="selectMode(this,'dump')">Dump</button></div>
   </div>
 
-  <div id="teamBtns" class="d-grid gap-2 result-group hidden">
+  <div id="teamBtns" class="d-grid gap-2 hidden">
     <button class="btn btn-success" onclick="selectResult(this,'wolfTeam')">Wolf Team Wins</button>
     <button class="btn btn-secondary" onclick="selectResult(this,'others')">Other Team Wins</button>
   </div>
 
-  <div id="loneBtns" class="d-grid gap-2 result-group hidden">
+  <div id="loneBtns" class="d-grid gap-2 hidden">
     <button class="btn btn-danger" onclick="selectResult(this,'loneWin')">Wolf Wins</button>
     <button class="btn btn-secondary" onclick="selectResult(this,'loneLose')">Wolf Loses</button>
   </div>
 
-  <div id="dumpBtns" class="d-grid gap-2 result-group hidden">
+  <div id="dumpBtns" class="d-grid gap-2 hidden">
     <button class="btn btn-dark" onclick="selectResult(this,'dumpWin')">Dump Wins</button>
     <button class="btn btn-secondary" onclick="selectResult(this,'dumpLose')">Others Win</button>
   </div>
 </div>
 
 <!-- TOTALS -->
-<div class="row g-2">
+<div class="row g-2 mb-3">
   <div class="col-6"><div class="total" id="t0"></div></div>
   <div class="col-6"><div class="total" id="t1"></div></div>
   <div class="col-6"><div class="total" id="t2"></div></div>
   <div class="col-6"><div class="total" id="t3"></div></div>
 </div>
 
+<!-- FINAL PAYOUT -->
+<div class="card p-4">
+  <h5 class="mb-3">Final Payout 💸</h5>
+  <div id="payouts" class="fw-bold"></div>
+</div>
+
 </div>
 
 <script>
-const baseInput=document.getElementById("base");
-const loneMultInput=document.getElementById("loneMult");
-const dumpMultInput=document.getElementById("dumpMult");
-const blindMultInput=document.getElementById("blindMult");
-const wolfSelect=document.getElementById("wolfSelect");
-const partnerSelect=document.getElementById("partnerSelect");
-
-const teamBtns=document.getElementById("teamBtns");
-const loneBtns=document.getElementById("loneBtns");
-const dumpBtns=document.getElementById("dumpBtns");
-
-let hole=1;
-let players=["Player 1","Player 2","Player 3","Player 4"];
-let totals=[0,0,0,0];
-let holes={};
+const baseInput=base,loneMultInput=loneMult,dumpMultInput=dumpMult,blindMultInput=blindMult;
+let hole=1,players=["Player 1","Player 2","Player 3","Player 4"],totals=[0,0,0,0],holes={};
 
 document.querySelectorAll(".player").forEach((i,idx)=>{
-  i.addEventListener("input",()=>{
-    players[idx]=i.value||`Player ${idx+1}`;
-    render(); recalc();
-  });
+  i.oninput=()=>{players[idx]=i.value||`Player ${idx+1}`;render();recalc();}
 });
 
-function getHole(){return holes[hole]??= {wolf:0,partner:null,mode:null,result:null};}
+function H(){return holes[hole]??= {wolf:0,partner:null,mode:null,result:null};}
 
-function selectMode(btn,mode){
+function selectMode(btn,m){
   document.querySelectorAll(".mode-group .btn").forEach(b=>b.classList.remove("selected"));
   btn.classList.add("selected");
-  getHole().mode=mode;
-  getHole().result=null;
-  clearResultSelection();
-  updateUI();
-  recalc();
-}
-
-function selectResult(btn,res){
-  btn.closest(".result-group").querySelectorAll(".btn").forEach(b=>b.classList.remove("selected"));
-  btn.classList.add("selected");
-  getHole().result=res;
-  recalc();
-}
-
-function clearResultSelection(){
+  H().mode=m; H().result=null;
   document.querySelectorAll(".result-group .btn").forEach(b=>b.classList.remove("selected"));
+  updateUI(); recalc();
+}
+
+function selectResult(btn,r){
+  btn.parentElement.querySelectorAll(".btn").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected");
+  H().result=r; recalc();
 }
 
 function recalc(){
@@ -190,7 +170,7 @@ function recalc(){
     if(h.mode==="blind") lone*=+blindMultInput.value;
     const dump=base*+dumpMultInput.value;
 
-    if(h.result==="wolfTeam"){totals[h.wolf]+=base;totals[h.partner]+=base;}
+    if(h.result==="wolfTeam"){totals[h.wolf]+=base; totals[h.partner]+=base;}
     if(h.result==="others"){players.forEach((_,i)=>{if(i!==h.wolf&&i!==h.partner) totals[i]+=base;});}
     if(h.result==="loneWin") totals[h.wolf]+=lone;
     if(h.result==="loneLose"){players.forEach((_,i)=>{if(i!==h.wolf) totals[i]+=base;});}
@@ -201,29 +181,47 @@ function recalc(){
 }
 
 function updateUI(){
-  const m=getHole().mode;
-  teamBtns.classList.toggle("hidden",m!=="team");
-  loneBtns.classList.toggle("hidden",!(m==="lone"||m==="blind"));
-  dumpBtns.classList.toggle("hidden",m!=="dump");
+  teamBtns.classList.toggle("hidden",H().mode!=="team");
+  loneBtns.classList.toggle("hidden",!(H().mode==="lone"||H().mode==="blind"));
+  dumpBtns.classList.toggle("hidden",H().mode!=="dump");
 }
 
 function render(){
-  document.getElementById("holeTitle").innerText=`Hole ${hole}`;
+  holeTitle.innerText=`Hole ${hole}`;
   wolfSelect.innerHTML=players.map((p,i)=>`<option value="${i}">${p}</option>`).join("");
-  wolfSelect.value=getHole().wolf;
-  partnerSelect.innerHTML='<option value="">-- None --</option>'+players.map((p,i)=>i!==getHole().wolf?`<option value="${i}">${p}</option>`:"").join("");
-  partnerSelect.value=getHole().partner??"";
+  wolfSelect.value=H().wolf;
+  partnerSelect.innerHTML='<option value="">-- None --</option>'+players.map((p,i)=>i!==H().wolf?`<option value="${i}">${p}</option>`:"").join("");
+  partnerSelect.value=H().partner??"";
   updateTotals();
 }
 
-wolfSelect.onchange=()=>{getHole().wolf=+wolfSelect.value;getHole().partner=null;render();recalc();};
-partnerSelect.onchange=()=>{getHole().partner=+partnerSelect.value;recalc();};
+wolfSelect.onchange=()=>{H().wolf=+wolfSelect.value;H().partner=null;render();recalc();};
+partnerSelect.onchange=()=>{H().partner=+partnerSelect.value;recalc();};
+baseInput.oninput=loneMultInput.oninput=dumpMultInput.oninput=blindMultInput.oninput=dollarValue.oninput=recalc;
 
 function prevHole(){if(hole>1){hole--;render();recalc();}}
 function nextHole(){if(hole<18){hole++;render();recalc();}}
 
 function updateTotals(){
   players.forEach((p,i)=>document.getElementById(`t${i}`).innerText=`${p}: ${totals[i]} pts`);
+  updatePayout();
+}
+
+function updatePayout(){
+  const dollar = +dollarValue.value || 0;
+  payouts.innerHTML = "";
+
+  players.forEach((p,i)=>{
+    const net = totals[i] * dollar;
+    const sign = net >= 0 ? "+" : "-";
+    const amount = Math.abs(net).toFixed(2);
+
+    payouts.innerHTML += `
+      <div>
+        ${p}: <strong>${sign}$${amount}</strong>
+      </div>
+    `;
+  });
 }
 
 render(); recalc();

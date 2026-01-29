@@ -1,0 +1,226 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vegas Golf Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  background:#0f5132;
+  font-family:system-ui,-apple-system,sans-serif;
+  color:#fff;
+}
+
+.container{max-width:1100px}
+
+h1{
+  font-weight:800;
+}
+
+.card{
+  background:#ffffff;
+  color:#000;
+  border:none;
+  border-radius:22px;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+}
+
+input,select{
+  border-radius:14px!important;
+  font-weight:600;
+}
+
+button{
+  border-radius:16px!important;
+  font-weight:700;
+}
+
+.btn.selected{
+  background:#0f5132!important;
+  color:#fff!important;
+  box-shadow:0 0 0 4px rgba(15,81,50,.25);
+}
+
+.section-title{
+  font-weight:800;
+  margin-bottom:.75rem;
+}
+
+.total{
+  background:#0f5132;
+  color:#fff;
+  padding:1.1rem;
+  border-radius:18px;
+  font-weight:700;
+  text-align:center;
+}
+
+.footer-space{
+  min-height:80px;
+}
+</style>
+</head>
+
+<body>
+<div class="container py-5">
+
+<h1 class="text-center mb-4">🎰 Vegas</h1>
+
+<!-- PLAYERS + STAKES -->
+<div class="card p-4 mb-4">
+  <div class="section-title">Players & Stakes</div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-3"><input class="form-control player" placeholder="Player 1"></div>
+    <div class="col-md-3"><input class="form-control player" placeholder="Player 2"></div>
+    <div class="col-md-3"><input class="form-control player" placeholder="Player 3"></div>
+    <div class="col-md-3"><input class="form-control player" placeholder="Player 4"></div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="fw-bold">$/Point</label>
+      <input id="dollarValue" type="number" step=".25" class="form-control" value="0.25">
+    </div>
+    <div class="col-md-6">
+      <label class="fw-bold">Junk Points</label>
+      <input id="junkValue" type="number" class="form-control" value="4">
+    </div>
+  </div>
+</div>
+
+<!-- HOLE ENTRY -->
+<div class="card p-4 mb-4">
+  <div class="section-title">Hole Scoring</div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-3">
+      <label class="fw-bold">Left Low</label>
+      <input id="leftLow" type="number" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <label class="fw-bold">Left High</label>
+      <input id="leftHigh" type="number" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <label class="fw-bold">Right Low</label>
+      <input id="rightLow" type="number" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <label class="fw-bold">Right High</label>
+      <input id="rightHigh" type="number" class="form-control">
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mb-3">
+    <button class="btn btn-outline-success flex-fill" id="birdieBtn" onclick="toggleBirdie(this)">
+      Birdie Flip
+    </button>
+    <button class="btn btn-outline-danger flex-fill" id="doubleBtn" onclick="toggleDouble(this)">
+      Both Birdie (Double)
+    </button>
+  </div>
+
+  <button class="btn btn-dark w-100" onclick="addHole()">Add Hole</button>
+</div>
+
+<!-- TOTALS -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="total" id="t0"></div></div>
+  <div class="col-md-3"><div class="total" id="t1"></div></div>
+  <div class="col-md-3"><div class="total" id="t2"></div></div>
+  <div class="col-md-3"><div class="total" id="t3"></div></div>
+</div>
+
+<!-- PAYOUT -->
+<div class="card p-4">
+  <div class="section-title">Final Payout</div>
+  <div id="payouts" class="fw-bold"></div>
+</div>
+
+<div class="footer-space"></div>
+
+</div>
+
+<script>
+let players=["Player 1","Player 2","Player 3","Player 4"];
+let points=[0,0,0,0];
+let birdie=false;
+let doubleBirdie=false;
+
+document.querySelectorAll(".player").forEach((i,idx)=>{
+  i.addEventListener("input",()=>{
+    players[idx]=i.value||`Player ${idx+1}`;
+    updateTotals();
+  });
+});
+
+function toggleBirdie(btn){
+  birdie=!birdie;
+  doubleBirdie=false;
+  btn.classList.toggle("selected",birdie);
+  doubleBtn.classList.remove("selected");
+}
+
+function toggleDouble(btn){
+  doubleBirdie=!doubleBirdie;
+  birdie=false;
+  btn.classList.toggle("selected",doubleBirdie);
+  birdieBtn.classList.remove("selected");
+}
+
+function addHole(){
+  const ll=+leftLow.value, lh=+leftHigh.value;
+  const rl=+rightLow.value, rh=+rightHigh.value;
+  if(!ll||!lh||!rl||!rh) return;
+
+  let left=ll*10+lh;
+  let right=rl*10+rh;
+
+  if(birdie||doubleBirdie){
+    left=lh*10+ll;
+    right=rh*10+rl;
+  }
+
+  let diff=Math.abs(left-right);
+  if(doubleBirdie) diff*=2;
+
+  if(left<right){
+    points[0]+=diff;
+    points[1]+=diff;
+  }else{
+    points[2]+=diff;
+    points[3]+=diff;
+  }
+
+  birdie=false;
+  doubleBirdie=false;
+  birdieBtn.classList.remove("selected");
+  doubleBtn.classList.remove("selected");
+
+  updateTotals();
+}
+
+function updateTotals(){
+  players.forEach((p,i)=>{
+    document.getElementById(`t${i}`).innerText =
+      `${p}: ${points[i]} pts`;
+  });
+  updatePayout();
+}
+
+function updatePayout(){
+  let sorted=[...points].map((p,i)=>({p,i})).sort((a,b)=>a.p-b.p);
+  let dollar=+dollarValue.value;
+  payouts.innerHTML =
+    `${players[sorted[0].i]} pays ${players[sorted[3].i]} $${((sorted[3].p-sorted[0].p)*dollar).toFixed(2)}<br>
+     ${players[sorted[1].i]} pays ${players[sorted[2].i]} $${((sorted[2].p-sorted[1].p)*dollar).toFixed(2)}`;
+}
+
+updateTotals();
+</script>
+</body>
+</html>
